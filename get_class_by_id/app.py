@@ -40,7 +40,7 @@ def lambda_handler(event, __):
     region_name = os.environ['REGION_NAME']
     try:
         secret = get_secret(secret_name, region_name)
-    except ClientError as e:
+    except ClientError as client:
         return {
             'statusCode': 400,
             'body': json.dumps(

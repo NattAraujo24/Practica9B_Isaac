@@ -81,8 +81,7 @@ class TestApp(unittest.TestCase):
     @patch("get_class_by_id.app.get_secret")
     @patch("get_class_by_id.app.connect_to_db")
     @patch("get_class_by_id.app.execute_query")
-    @patch("get_class_by_id.app.close_connection")
-    def test_lambda_handler_db_execution_exception(self, mock_close_connection, mock_execute_query, mock_connect_to_db,
+    def test_lambda_handler_db_execution_exception(self, mock_execute_query, mock_connect_to_db,
                                                    mock_get_secret):
         mock_get_secret.return_value = {
             'username': 'username_one',
@@ -93,9 +92,11 @@ class TestApp(unittest.TestCase):
             'dbInstanceIdentifier': 'bd'
         }
         mock_connect_to_db.return_value = True
-        mock_execute_query.side_effect = Exception("Database query execution failed")
+        # Configuramos el mock para que lance una excepción al ejecutar la consulta
+        mock_execute_query.side_effect = Exception("Database query execution failedoooooooooooo")
 
         result = app.lambda_handler(mock_body, None)
+
         self.assertEqual(result["statusCode"], 500)
         body = json.loads(result["body"])
         self.assertIn("error", body)
